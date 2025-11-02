@@ -1,0 +1,142 @@
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowLeft, MapPin, Mail, Phone, User, Heart } from "lucide-react";
+import { usePetStore } from "@/store/petStore";
+
+const ageLabels = {
+  puppy: "Cachorro",
+  young: "Joven",
+  adult: "Adulto",
+  senior: "Senior",
+};
+
+const sizeLabels = {
+  small: "Pequeño",
+  medium: "Mediano",
+  large: "Grande",
+};
+
+const PetDetail = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const getPetById = usePetStore((state) => state.getPetById);
+  const pet = getPetById(id || "");
+
+  if (!pet) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <h1 className="mb-4 text-2xl font-bold">Mascota no encontrada</h1>
+          <Button onClick={() => navigate("/")}>Volver al inicio</Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="border-b border-border bg-card">
+        <div className="container mx-auto flex items-center justify-between px-4 py-4">
+          <Link to="/" className="flex items-center gap-2">
+            <span className="text-2xl">🐾</span>
+            <span className="text-xl font-bold text-foreground">AdoptaPet</span>
+          </Link>
+          <Button variant="outline" asChild>
+            <Link to="/">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Volver
+            </Link>
+          </Button>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-12">
+        <div className="grid gap-8 lg:grid-cols-2">
+          <div className="space-y-4">
+            <div className="overflow-hidden rounded-2xl">
+              <img
+                src={pet.image}
+                alt={pet.name}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <div className="mb-4 flex items-start justify-between">
+                <div>
+                  <h1 className="mb-2 text-4xl font-bold text-foreground">{pet.name}</h1>
+                  <p className="text-xl text-muted-foreground">{pet.breed}</p>
+                </div>
+                <Button size="icon" className="rounded-full">
+                  <Heart className="h-5 w-5" />
+                </Button>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <Badge className="text-base">{pet.type === "dog" ? "🐶 Perro" : "🐱 Gato"}</Badge>
+                <Badge variant="secondary" className="text-base">
+                  {ageLabels[pet.age]}
+                </Badge>
+                <Badge variant="secondary" className="text-base">
+                  {sizeLabels[pet.size]}
+                </Badge>
+              </div>
+            </div>
+
+            <Card>
+              <CardContent className="p-6">
+                <h2 className="mb-3 text-lg font-semibold text-foreground">Sobre {pet.name}</h2>
+                <p className="leading-relaxed text-muted-foreground">{pet.description}</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <h2 className="mb-4 text-lg font-semibold text-foreground">Información de contacto</h2>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <User className="h-5 w-5 text-muted-foreground" />
+                    <span className="text-foreground">{pet.contactName}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Mail className="h-5 w-5 text-muted-foreground" />
+                    <a
+                      href={`mailto:${pet.contactEmail}`}
+                      className="text-primary hover:underline"
+                    >
+                      {pet.contactEmail}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Phone className="h-5 w-5 text-muted-foreground" />
+                    <a
+                      href={`tel:${pet.contactPhone}`}
+                      className="text-primary hover:underline"
+                    >
+                      {pet.contactPhone}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <MapPin className="h-5 w-5 text-muted-foreground" />
+                    <span className="text-foreground">{pet.location}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Button size="lg" className="w-full">
+              <Mail className="mr-2 h-5 w-5" />
+              Contactar para adoptar
+            </Button>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default PetDetail;
