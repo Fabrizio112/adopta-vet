@@ -69,7 +69,7 @@ const Index = () => {
 
       <footer className="border-t border-border bg-card py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>© 2024 AdoptaPet. Ayudando a conectar mascotas con familias amorosas.</p>
+          <p>© 2026 AdoptaPet. Ayudando a conectar mascotas con familias amorosas.</p>
         </div>
       </footer>
     </div>

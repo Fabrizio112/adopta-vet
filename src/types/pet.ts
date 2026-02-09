@@ -23,3 +23,5 @@ export interface PetFilters {
   age: PetAge | "all";
   size: PetSize | "all";
 }
+
+export type AddPetData = Omit<Pet, "id" | "createdAt">;

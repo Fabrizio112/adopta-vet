@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import { usePetStore } from "@/store/petStore";
-import { PetType, PetAge, PetSize } from "@/types/pet";
+import { PetType, PetAge, PetSize, AddPetData } from "@/types/pet";
 import { useToast } from "@/hooks/use-toast";
 
 const AddPet = () => {
@@ -16,7 +16,7 @@ const AddPet = () => {
   const addPet = usePetStore((state) => state.addPet);
   const { toast } = useToast();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<AddPetData>({
     name: "",
     type: "" as PetType,
     breed: "",
@@ -27,15 +27,15 @@ const AddPet = () => {
     contactName: "",
     contactEmail: "",
     contactPhone: "",
-    imageUrl: "",
+    image: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.name || !formData.type || !formData.breed || !formData.age || 
-        !formData.size || !formData.description || !formData.location || 
-        !formData.contactName || !formData.contactEmail || !formData.contactPhone) {
+
+    if (!formData.name || !formData.type || !formData.breed || !formData.age ||
+      !formData.size || !formData.description || !formData.location ||
+      !formData.contactName || !formData.contactEmail || !formData.contactPhone) {
       toast({
         title: "Error",
         description: "Por favor completa todos los campos obligatorios",
@@ -46,7 +46,7 @@ const AddPet = () => {
 
     addPet({
       ...formData,
-      image: formData.imageUrl || "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80",
+      image: formData.image || "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80",
     });
 
     toast({
@@ -188,19 +188,19 @@ const AddPet = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="imageUrl">URL de imagen (opcional)</Label>
+                <Label htmlFor="image">URL de imagen (opcional)</Label>
                 <Input
-                  id="imageUrl"
+                  id="image"
                   type="url"
-                  value={formData.imageUrl}
-                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                  value={formData.image}
+                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                   placeholder="https://ejemplo.com/imagen.jpg"
                 />
               </div>
 
               <div className="space-y-4 rounded-lg border border-border p-4">
                 <h3 className="font-semibold text-foreground">Información de contacto</h3>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="contactName">Nombre *</Label>
                   <Input
