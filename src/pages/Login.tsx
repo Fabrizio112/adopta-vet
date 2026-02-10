@@ -5,16 +5,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, LogIn } from "lucide-react";
+import authService from "@/services/authService";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: ""
+  })
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Solo visual por ahora
-    console.log("Login attempt:", { email, password });
+    try {
+      const data = await authService.loginUser(loginData);
+      console.log(data)
+      console.log("Login attempt:", loginData);
+    } catch (error) {
+      console.error("Login error:", error);
+    }
+
   };
 
   return (
@@ -41,8 +50,8 @@ const Login = () => {
                   id="email"
                   type="email"
                   placeholder="tu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={loginData.email}
+                  onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                   required
                 />
               </div>
@@ -62,8 +71,8 @@ const Login = () => {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={loginData.password}
+                    onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                     required
                   />
                   <button
