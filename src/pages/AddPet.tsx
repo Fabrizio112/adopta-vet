@@ -9,12 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft } from "lucide-react";
 import { usePetStore } from "@/store/petStore";
 import { PetType, PetAge, PetSize, AddPetData } from "@/types/pet";
-import { useToast } from "@/hooks/use-toast";
 
 const AddPet = () => {
   const navigate = useNavigate();
   const addPet = usePetStore((state) => state.addPet);
-  const { toast } = useToast();
 
   const [formData, setFormData] = useState<AddPetData>({
     name: "",
@@ -36,22 +34,12 @@ const AddPet = () => {
     if (!formData.name || !formData.type || !formData.breed || !formData.age ||
       !formData.size || !formData.description || !formData.location ||
       !formData.contactName || !formData.contactEmail || !formData.contactPhone) {
-      toast({
-        title: "Error",
-        description: "Por favor completa todos los campos obligatorios",
-        variant: "destructive",
-      });
       return;
     }
 
     addPet({
       ...formData,
       image: formData.image || "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80",
-    });
-
-    toast({
-      title: "¡Mascota publicada!",
-      description: "Tu publicación ha sido creada exitosamente",
     });
 
     navigate("/");
