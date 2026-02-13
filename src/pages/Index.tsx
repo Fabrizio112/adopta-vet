@@ -1,15 +1,29 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, User } from "lucide-react";
 import Hero from "@/components/Hero";
 import PetCard from "@/components/PetCard";
 import PetFilters from "@/components/PetFilters";
 import { usePetStore } from "@/store/petStore";
+import { useEffect, useMemo } from "react";
 
 const Index = () => {
-  const getFilteredPets = usePetStore((state) => state.getFilteredPets);
-  const filteredPets = getFilteredPets();
+  const fetchPets = usePetStore((state) => state.fetchPets);
+  const pets = usePetStore((state) => state.pets)
+  const filters = usePetStore((state) => state.filters)
+  const userLogin = usePetStore(state => state.userLogin)
 
+  const filteredPets = useMemo(() => pets.filter((pet) => {
+    if (filters.type !== "all" && pet.type !== filters.type) return false;
+    if (filters.age !== "all" && pet.age !== filters.age) return false;
+    if (filters.size !== "all" && pet.size !== filters.size) return false;
+    return true;
+  }), [pets, filters])
+
+
+  useEffect(() => {
+    fetchPets();
+  }, [])
   return (
     <div className="min-h-screen">
       <header className="border-b border-border bg-card">
@@ -18,12 +32,22 @@ const Index = () => {
             <span className="text-2xl">🐾</span>
             <span className="text-xl font-bold text-foreground">AdoptaPet</span>
           </Link>
-          <Button asChild>
-            <Link to="/publicar">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Publicar mascota
-            </Link>
-          </Button>
+          <div className="flex gap-2">
+            {!userLogin._id && <Button variant="blue" asChild>
+              <Link to="/login">
+                <User className="mr-2 h-4 w-4" />
+                Iniciar Sesion
+              </Link>
+            </Button>}
+
+            <Button asChild>
+              <Link to="/publicar">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Publicar mascota
+              </Link>
+            </Button>
+          </div>
+
         </div>
       </header>
 
@@ -58,7 +82,7 @@ const Index = () => {
               ) : (
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {filteredPets.map((pet) => (
-                    <PetCard key={pet.id} pet={pet} />
+                    <PetCard key={pet._id} pet={pet} />
                   ))}
                 </div>
               )}

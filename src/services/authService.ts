@@ -1,13 +1,13 @@
 import { api } from "@/lib/axios";
+import { LoginData, RegisterData } from "@/types/user";
 import { isAxiosError } from "axios";
-
 export class AuthService {
     private authBase = import.meta.env.VITE_API_ROUTE_AUTH;
 
-    async createAccount(userData: any) {
+    async createAccount(registerData: RegisterData) {
         try {
             const url = this.authBase + "/create-account";
-            const data = await api.post(url, userData);
+            const data = await api.post(url, registerData);
             return data;
         } catch (error) {
             if (isAxiosError(error) && error.response) {
@@ -17,10 +17,10 @@ export class AuthService {
         }
     }
 
-    async loginUser(userData: any) {
+    async loginUser(loginData: LoginData) {
         try {
             const url = this.authBase + "/login";
-            const data = await api.post(url, userData);
+            const data = await api.post(url, loginData);
             return data;
         } catch (error) {
             if (isAxiosError(error) && error.response) {

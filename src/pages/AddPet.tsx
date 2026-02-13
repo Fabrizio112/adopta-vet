@@ -8,11 +8,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import { usePetStore } from "@/store/petStore";
-import { PetType, PetAge, PetSize, AddPetData } from "@/types/pet";
+import { PetType, PetAge, PetSize, AddPetData, PetLocation } from "@/types/pet";
+import { ProvinciaArgentina } from "@/helper";
+import Swal from "sweetalert2";
 
 const AddPet = () => {
   const navigate = useNavigate();
   const addPet = usePetStore((state) => state.addPet);
+  const userLogin = usePetStore((state) => state.userLogin);
 
   const [formData, setFormData] = useState<AddPetData>({
     name: "",
@@ -21,28 +24,43 @@ const AddPet = () => {
     age: "" as PetAge,
     size: "" as PetSize,
     description: "",
-    location: "",
-    contactName: "",
-    contactEmail: "",
-    contactPhone: "",
-    image: "",
+    location: "" as PetLocation,
+    imageUrl: "",
+    user: ""
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!formData.name || !formData.type || !formData.breed || !formData.age ||
-      !formData.size || !formData.description || !formData.location ||
-      !formData.contactName || !formData.contactEmail || !formData.contactPhone) {
+      !formData.size || !formData.description || !formData.location) {
       return;
     }
+    try {
+      const responseStatus = await addPet({
+        ...formData,
+        user: userLogin._id,
+        imageUrl: formData.imageUrl || formData.type === "dog" ? "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80" : "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=80",
+      })
+      if (responseStatus === 201) {
+        Swal.fire({
+          icon: "success",
+          title: "Mascota agregada",
+          text: "¡La mascota se ha agregado correctamente!",
+          timer: 2000,
+          showConfirmButton: false
+        })
+        navigate("/");
+      }
 
-    addPet({
-      ...formData,
-      image: formData.image || "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80",
-    });
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error al agregar mascota",
+        text: error.message,
+      })
+    }
 
-    navigate("/");
+
   };
 
   return (
@@ -165,66 +183,35 @@ const AddPet = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="location">Ubicación *</Label>
-                <Input
-                  id="location"
+                <Label htmlFor="location">Ubicacion *</Label>
+                <Select
                   value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  placeholder="Ej: Buenos Aires, Argentina"
+                  onValueChange={(value: PetLocation) => setFormData({ ...formData, location: value })}
                   required
-                />
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(ProvinciaArgentina).map((provincia) => (
+                      <SelectItem key={provincia} value={provincia}>{provincia}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+
+
 
               <div className="space-y-2">
                 <Label htmlFor="image">URL de imagen (opcional)</Label>
                 <Input
                   id="image"
                   type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                  value={formData.imageUrl}
+                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
                   placeholder="https://ejemplo.com/imagen.jpg"
                 />
               </div>
-
-              <div className="space-y-4 rounded-lg border border-border p-4">
-                <h3 className="font-semibold text-foreground">Información de contacto</h3>
-
-                <div className="space-y-2">
-                  <Label htmlFor="contactName">Nombre *</Label>
-                  <Input
-                    id="contactName"
-                    value={formData.contactName}
-                    onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
-                    placeholder="Tu nombre completo"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="contactEmail">Email *</Label>
-                  <Input
-                    id="contactEmail"
-                    type="email"
-                    value={formData.contactEmail}
-                    onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
-                    placeholder="tu@email.com"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="contactPhone">Teléfono *</Label>
-                  <Input
-                    id="contactPhone"
-                    type="tel"
-                    value={formData.contactPhone}
-                    onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
-                    placeholder="+54 9 11 1234-5678"
-                    required
-                  />
-                </div>
-              </div>
-
               <Button type="submit" size="lg" className="w-full">
                 Publicar mascota
               </Button>

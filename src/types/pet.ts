@@ -1,21 +1,24 @@
+import { ProvinciaArgentina } from "@/helper";
+import { User } from "./user";
+
 export type PetType = "dog" | "cat";
 export type PetSize = "small" | "medium" | "large";
 export type PetAge = "puppy" | "young" | "adult" | "senior";
+export type PetLocation = ProvinciaArgentina
 
 export interface Pet {
-  id: string;
+  _id: string;
   name: string;
   type: PetType;
   breed: string;
   age: PetAge;
   size: PetSize;
   description: string;
-  image: string;
-  location: string;
-  contactName: string;
-  contactEmail: string;
-  contactPhone: string;
+  imageUrl: string;
+  location: PetLocation;
   createdAt: Date;
+  updatedAt: Date;
+  user: User["_id"];
 }
 
 export interface PetFilters {
@@ -24,4 +27,4 @@ export interface PetFilters {
   size: PetSize | "all";
 }
 
-export type AddPetData = Omit<Pet, "id" | "createdAt">;
+export type AddPetData = Omit<Pet, "createdAt" | "updatedAt" | "_id">;

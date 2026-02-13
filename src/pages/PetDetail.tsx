@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, MapPin, Mail, Phone, User, Heart } from "lucide-react";
 import { usePetStore } from "@/store/petStore";
+import { useEffect, useState } from "react";
+import { Pet } from "@/types/pet";
 
 const ageLabels = {
   puppy: "Cachorro",
@@ -21,8 +23,17 @@ const sizeLabels = {
 const PetDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const getPetById = usePetStore((state) => state.getPetById);
-  const pet = getPetById(id || "");
+  const fetchPetByID = usePetStore((state) => state.fetchPetByID);
+  const [pet, setPet] = useState<Pet | undefined>(undefined);
+  const userLogin = usePetStore((state) => state.userLogin)
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchPetByID(id).then((data) => {
+      setPet(data);
+      setLoading(false);
+    });
+  }, [])
 
   if (!pet) {
     return (
@@ -57,7 +68,7 @@ const PetDetail = () => {
           <div className="space-y-4">
             <div className="overflow-hidden rounded-2xl">
               <img
-                src={pet.image}
+                src={pet.imageUrl}
                 alt={pet.name}
                 className="h-full w-full object-cover"
               />
@@ -100,24 +111,24 @@ const PetDetail = () => {
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <User className="h-5 w-5 text-muted-foreground" />
-                    <span className="text-foreground">{pet.contactName}</span>
+                    <span className="text-foreground">{userLogin.name}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Mail className="h-5 w-5 text-muted-foreground" />
                     <a
-                      href={`mailto:${pet.contactEmail}`}
+                      href={`mailto:${userLogin.email}`}
                       className="text-primary hover:underline"
                     >
-                      {pet.contactEmail}
+                      {userLogin.email}
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
                     <Phone className="h-5 w-5 text-muted-foreground" />
                     <a
-                      href={`tel:${pet.contactPhone}`}
+                      href={`tel:${userLogin.telphone}`}
                       className="text-primary hover:underline"
                     >
-                      {pet.contactPhone}
+                      {userLogin.telphone}
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
@@ -128,14 +139,26 @@ const PetDetail = () => {
               </CardContent>
             </Card>
 
-            <Button size="lg" className="w-full">
-              <Mail className="mr-2 h-5 w-5" />
-              Contactar para adoptar
-            </Button>
+            <div className="flex gap-4">
+              <Button size="lg" className="w-full">
+                <a href={`mailto:${userLogin.email}`} className="flex hover:underline">
+                  <Mail className="mr-2 h-5 w-5" />
+                  Contactar por Correo
+                </a>
+              </Button>
+              <Button variant="secondary" size="lg" className="w-full"  >
+
+                <a href={`https://wa.me/${userLogin.telphone}`} className="flex hover:underline">
+                  <Phone className="mr-2 h-5 w-5" />
+                  Contactar por Whatsapp
+                </a>
+              </Button>
+            </div>
+
           </div>
         </div>
-      </main>
-    </div>
+      </main >
+    </div >
   );
 };
 

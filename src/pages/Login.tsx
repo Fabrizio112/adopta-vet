@@ -1,27 +1,46 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import authService from "@/services/authService";
+import swal from "sweetalert2";
+import { LoginData } from "@/types/user";
+import { usePetStore } from "@/store/petStore";
 
 const Login = () => {
-  const [loginData, setLoginData] = useState({
+  const navigate = useNavigate()
+  const [loginData, setLoginData] = useState<LoginData>({
     email: "",
     password: ""
   })
   const [showPassword, setShowPassword] = useState(false);
+  const setUserLogin = usePetStore(state => state.setUserLogin)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const data = await authService.loginUser(loginData);
-      console.log(data)
-      console.log("Login attempt:", loginData);
+      if (data.status == 200) {
+        await swal.fire({
+          icon: "success",
+          title: "Iniciando Sesion",
+          text: "¡Bienvenido de nuevo! Redirigiendo a tu perfil...",
+          timer: 2000,
+          showConfirmButton: false
+        })
+        setUserLogin(data.data.user)
+        localStorage.setItem("userLogin", JSON.stringify(data.data.user))
+        navigate("/")
+      }
     } catch (error) {
-      console.error("Login error:", error);
+      swal.fire({
+        icon: "error",
+        title: "Login Error",
+        text: error.message,
+      })
     }
 
   };

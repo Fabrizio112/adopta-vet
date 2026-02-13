@@ -1,21 +1,46 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, UserPlus } from "lucide-react";
+import { RegisterData } from "@/types/user";
+import Swal from "sweetalert2";
+import authService from "@/services/authService";
 
 const Register = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false);
+  const [registerData, setRegisterData] = useState<RegisterData>({
+    name: "",
+    email: "",
+    password: "",
+    repeat_password: "",
+    telphone: ""
+  })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Register attempt:", { name, email, password });
+    try {
+      const data = await authService.createAccount(registerData);
+      if (data.status == 201) {
+        await Swal.fire({
+          icon: "success",
+          title: "Registrando usuario",
+          text: "¡Cuenta creada exitosamente! Redirigiendo a inicio de sesión...",
+          timer: 2000,
+          showConfirmButton: false
+        })
+        navigate("/login")
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error de registro",
+        text: error.message,
+      })
+    }
   };
 
   return (
@@ -42,8 +67,19 @@ const Register = () => {
                   id="name"
                   type="text"
                   placeholder="Tu nombre"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={registerData.name}
+                  onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="telphone">Telefono </Label>
+                <Input
+                  id="telphone"
+                  type="text"
+                  placeholder="Tu telefono"
+                  value={registerData.telphone}
+                  onChange={(e) => setRegisterData({ ...registerData, telphone: e.target.value })}
                   required
                 />
               </div>
@@ -54,8 +90,8 @@ const Register = () => {
                   id="email"
                   type="email"
                   placeholder="tu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={registerData.email}
+                  onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
                   required
                 />
               </div>
@@ -67,8 +103,8 @@ const Register = () => {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Mínimo 6 caracteres"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={registerData.password}
+                    onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
                     required
                     minLength={6}
                   />
@@ -88,8 +124,8 @@ const Register = () => {
                   id="confirmPassword"
                   type={showPassword ? "text" : "password"}
                   placeholder="Repetí tu contraseña"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  value={registerData.repeat_password}
+                  onChange={(e) => setRegisterData({ ...registerData, repeat_password: e.target.value })}
                   required
                   minLength={6}
                 />
