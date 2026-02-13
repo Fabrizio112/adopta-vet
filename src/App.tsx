@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ const App = () => (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Index />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/mascota/:id" element={<PetDetail />} />
         <Route path="/publicar" element={<AddPet />} />
         <Route path="/login" element={<Login />} />
