@@ -33,12 +33,21 @@ const Index = () => {
             <span className="text-xl font-bold text-foreground">AdoptaPet</span>
           </Link>
           <div className="flex gap-2">
-            {!userLogin._id && <Button variant="blue" asChild>
-              <Link to="/login">
-                <User className="mr-2 h-4 w-4" />
-                Iniciar Sesion
-              </Link>
-            </Button>}
+            {!userLogin._id ? (
+              <Button variant="blue" asChild>
+                <Link to="/login">
+                  <User className="mr-2 h-4 w-4" />
+                  Iniciar Sesion
+                </Link>
+              </Button>
+            ) : (
+              <Button variant="outline" asChild>
+                <Link to="/dashboard">
+                  <User className="mr-2 h-4 w-4" />
+                  Mi Panel
+                </Link>
+              </Button>
+            )}
 
             <Button asChild>
               <Link to="/publicar">
