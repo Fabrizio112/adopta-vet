@@ -22,6 +22,7 @@ export const usePetStore = create<PetStore>((set, get) => ({
     type: "all",
     age: "all",
     size: "all",
+    location: "all",
   },
   setUserLogin: (user) => set(() => ({ userLogin: user })),
   fetchPets: async () => {

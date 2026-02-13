@@ -17,6 +17,7 @@ const Index = () => {
     if (filters.type !== "all" && pet.type !== filters.type) return false;
     if (filters.age !== "all" && pet.age !== filters.age) return false;
     if (filters.size !== "all" && pet.size !== filters.size) return false;
+    if (filters.location !== "all" && pet.location !== filters.location) return false;
     return true;
   }), [pets, filters])
 

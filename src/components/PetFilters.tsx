@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { usePetStore } from "@/store/petStore";
-import { PetType, PetAge, PetSize } from "@/types/pet";
+import { PetType, PetAge, PetSize, PetLocation } from "@/types/pet";
+import { ProvinciaArgentina } from "@/helper";
 
 const PetFilters = () => {
   const { filters, setFilters } = usePetStore();
@@ -25,6 +27,8 @@ const PetFilters = () => {
     { value: "medium", label: "Mediano" },
     { value: "large", label: "Grande" },
   ];
+
+  const provincias = Object.values(ProvinciaArgentina);
 
   return (
     <div className="space-y-6">
@@ -75,6 +79,26 @@ const PetFilters = () => {
             </Button>
           ))}
         </div>
+      </div>
+
+      <div>
+        <h3 className="mb-3 text-sm font-semibold text-foreground">Provincia</h3>
+        <Select
+          value={filters.location}
+          onValueChange={(value) => setFilters({ location: value as PetLocation | "all" })}
+        >
+          <SelectTrigger className="w-full bg-card">
+            <SelectValue placeholder="Todas las provincias" />
+          </SelectTrigger>
+          <SelectContent className="z-50 bg-card border border-border shadow-lg">
+            <SelectItem value="all">Todas las provincias</SelectItem>
+            {provincias.map((provincia) => (
+              <SelectItem key={provincia} value={provincia}>
+                {provincia}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );
