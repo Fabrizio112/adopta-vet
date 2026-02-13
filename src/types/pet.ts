@@ -25,6 +25,7 @@ export interface PetFilters {
   type: PetType | "all";
   age: PetAge | "all";
   size: PetSize | "all";
+  location: PetLocation | "all";
 }
 
 export type AddPetData = Omit<Pet, "createdAt" | "updatedAt" | "_id">;
