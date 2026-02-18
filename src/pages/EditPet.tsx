@@ -12,22 +12,13 @@ import { ProvinciaArgentina } from "@/helper";
 import Swal from "sweetalert2";
 import { useAppStore } from "@/store/store";
 
-const AddPet = () => {
+const EditPet = () => {
   const navigate = useNavigate();
-  const addPet = useAppStore((state) => state.addPet);
   const userLogin = useAppStore((state) => state.userLogin);
+  const editPet = useAppStore((state) => state.editPet);
+  const updateAnimal = useAppStore((state) => state.updatePet);
 
-  const [formData, setFormData] = useState<AddPetData>({
-    name: "",
-    type: "" as PetType,
-    breed: "",
-    age: "" as PetAge,
-    size: "" as PetSize,
-    description: "",
-    location: "" as PetLocation,
-    imageUrl: "",
-    user: ""
-  });
+  const [formData, setFormData] = useState<AddPetData>(editPet);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,16 +27,18 @@ const AddPet = () => {
       return;
     }
     try {
-      const response = await addPet({
-        ...formData,
-        user: userLogin._id,
-        imageUrl: formData.imageUrl || formData.type === "dog" ? "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80" : "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=80",
+      const response = await updateAnimal({
+        id: editPet._id,
+        petData: {
+          ...formData,
+          imageUrl: formData.imageUrl || formData.type === "dog" ? "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80" : "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=80"
+        }
       })
-      if (response === 201) {
+      if (response === 200) {
         Swal.fire({
           icon: "success",
-          title: "Mascota agregada",
-          text: "¡La mascota se ha agregado correctamente!",
+          title: "Mascota actualizada",
+          text: "¡La mascota se ha actualizado correctamente!",
           timer: 2000,
           showConfirmButton: false
         })
@@ -54,7 +47,7 @@ const AddPet = () => {
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: "Error al agregar mascota",
+        title: "Error al actualizar mascota",
         text: error.message,
       })
     }
@@ -82,9 +75,9 @@ const AddPet = () => {
       <main className="container mx-auto max-w-2xl px-4 py-12">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Publicar mascota en adopción</CardTitle>
+            <CardTitle className="text-2xl">Editar mascota en adopción</CardTitle>
             <CardDescription>
-              Completa el formulario con la información de la mascota que buscas dar en adopción
+              Completa el formulario con la información de la mascota que estas editando
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -222,4 +215,4 @@ const AddPet = () => {
   );
 };
 
-export default AddPet;
+export default EditPet;

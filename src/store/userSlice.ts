@@ -1,0 +1,15 @@
+import authService from "@/services/authService"
+import { User } from "@/types/user"
+
+const initalUserLogin = localStorage.getItem("userLogin") ? JSON.parse(localStorage.getItem("userLogin") as string) : {} as User
+
+export const userSlice = (set, get) => ({
+    userLogin: initalUserLogin as User,
+    setUserLogin: (data) => {
+        set(() => ({ userLogin: data }))
+    },
+    getActualUser: async (id) => {
+        const data = await authService.getUser(id)
+        set(() => ({ userLogin: data.data }))
+    }
+})

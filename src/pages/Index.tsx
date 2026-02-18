@@ -4,14 +4,14 @@ import { PlusCircle, User } from "lucide-react";
 import Hero from "@/components/Hero";
 import PetCard from "@/components/PetCard";
 import PetFilters from "@/components/PetFilters";
-import { usePetStore } from "@/store/petStore";
 import { useEffect, useMemo } from "react";
+import { useAppStore } from "@/store/store";
 
 const Index = () => {
-  const fetchPets = usePetStore((state) => state.fetchPets);
-  const pets = usePetStore((state) => state.pets)
-  const filters = usePetStore((state) => state.filters)
-  const userLogin = usePetStore(state => state.userLogin)
+  const fetchPets = useAppStore((state) => state.fetchPets);
+  const pets = useAppStore((state) => state.pets)
+  const filters = useAppStore((state) => state.filters)
+  const userLogin = useAppStore(state => state.userLogin)
 
   const filteredPets = useMemo(() => pets.filter((pet) => {
     if (filters.type !== "all" && pet.type !== filters.type) return false;

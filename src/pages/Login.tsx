@@ -8,7 +8,7 @@ import { Eye, EyeOff, LogIn } from "lucide-react";
 import authService from "@/services/authService";
 import swal from "sweetalert2";
 import { LoginData } from "@/types/user";
-import { usePetStore } from "@/store/petStore";
+import { useAppStore } from "@/store/store";
 
 const Login = () => {
   const navigate = useNavigate()
@@ -17,7 +17,7 @@ const Login = () => {
     password: ""
   })
   const [showPassword, setShowPassword] = useState(false);
-  const setUserLogin = usePetStore(state => state.setUserLogin)
+  const setUserLogin = useAppStore(state => state.setUserLogin)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

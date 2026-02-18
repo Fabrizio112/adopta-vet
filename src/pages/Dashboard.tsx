@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,33 +16,10 @@ import {
   Trash2,
   User,
 } from "lucide-react";
-import { usePetStore } from "@/store/petStore";
+import { useAppStore } from "@/store/store";
+import Swal from "sweetalert2";
 
 // Mock data for visual purposes
-const mockMyPets = [
-  {
-    _id: "1",
-    name: "Luna",
-    type: "dog",
-    breed: "Labrador",
-    age: "young",
-    size: "large",
-    imageUrl: "/placeholder.svg",
-    location: "Buenos Aires",
-    createdAt: "2026-01-15",
-  },
-  {
-    _id: "2",
-    name: "Milo",
-    type: "cat",
-    breed: "Siamés",
-    age: "puppy",
-    size: "small",
-    imageUrl: "/placeholder.svg",
-    location: "Córdoba",
-    createdAt: "2026-02-01",
-  },
-];
 
 const mockFavorites = [
   {
@@ -82,8 +59,11 @@ const sizeLabels: Record<string, string> = {
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const userLogin = usePetStore((state) => state.userLogin);
-  const setUserLogin = usePetStore((state) => state.setUserLogin);
+  const userLogin = useAppStore((state) => state.userLogin);
+  const setUserLogin = useAppStore((state) => state.setUserLogin);
+  const setEditPet = useAppStore((state) => state.setEditPet);
+  const getActualUser = useAppStore((state) => state.getActualUser);
+  const deletePet = useAppStore((state) => state.deletePet);
 
   const [profileData, setProfileData] = useState({
     name: userLogin.name || "Usuario Demo",
@@ -102,6 +82,36 @@ const Dashboard = () => {
     setIsEditing(false);
     // Aquí se conectará con el backend
   };
+
+  const handleDelete = async (id: string) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción eliminará tu publicación permanentemente.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deletePet(id).then(() => {
+          Swal.fire({
+            title: "Eliminado",
+            text: "Tu publicación ha sido eliminada.",
+            icon: "success",
+          });
+          navigate("/");
+        });
+
+      }
+    });
+  }
+
+
+  useEffect(() => {
+    getActualUser(userLogin._id);
+  }, [])
 
   return (
     <div className="min-h-screen bg-background">
@@ -279,43 +289,46 @@ const Dashboard = () => {
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {mockMyPets.map((pet) => (
-                  <Card key={pet._id} className="overflow-hidden border-border">
+                {userLogin.animals?.map((animal) => (
+                  <Card key={animal._id} className="overflow-hidden border-border">
                     <div className="relative aspect-video bg-muted">
                       <img
-                        src={pet.imageUrl}
-                        alt={pet.name}
+                        src={animal.imageUrl}
+                        alt={animal.name}
                         className="h-full w-full object-cover"
                       />
                       <Badge className="absolute right-2 top-2 bg-primary text-primary-foreground">
-                        {pet.type === "dog" ? "🐶 Perro" : "🐱 Gato"}
+                        {animal.type === "dog" ? "🐶 Perro" : "🐱 Gato"}
                       </Badge>
                     </div>
                     <CardContent className="p-4">
                       <div className="mb-2 flex items-center justify-between">
                         <h3 className="text-lg font-semibold text-foreground">
-                          {pet.name}
+                          {animal.name}
                         </h3>
                         <span className="text-xs text-muted-foreground">
-                          {pet.createdAt}
+                          {animal.createdAt.toString().split("T")[0]}
                         </span>
                       </div>
                       <p className="mb-1 text-sm text-muted-foreground">
-                        {pet.breed} · {ageLabels[pet.age]} ·{" "}
-                        {sizeLabels[pet.size]}
+                        {animal.breed} · {ageLabels[animal.age]} ·{" "}
+                        {sizeLabels[animal.size]}
                       </p>
                       <p className="mb-3 text-sm text-muted-foreground">
-                        📍 {pet.location}
+                        📍 {animal.location}
                       </p>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="flex-1">
-                          <Pencil className="mr-1 h-3 w-3" />
-                          Editar
-                        </Button>
+                        <Link to="/editar" className="flex-1" onClick={() => setEditPet(animal)}>
+                          <Button variant="outline" size="sm" className="w-full">
+                            <Pencil className="mr-1 h-3 w-3" />
+                            Editar
+                          </Button>
+                        </Link>
                         <Button
                           variant="destructive"
                           size="sm"
                           className="flex-1"
+                          onClick={() => handleDelete(animal._id)}
                         >
                           <Trash2 className="mr-1 h-3 w-3" />
                           Eliminar

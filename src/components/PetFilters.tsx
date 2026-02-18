@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { usePetStore } from "@/store/petStore";
 import { PetType, PetAge, PetSize, PetLocation } from "@/types/pet";
 import { ProvinciaArgentina } from "@/helper";
+import { useAppStore } from "@/store/store";
 
 const PetFilters = () => {
-  const { filters, setFilters } = usePetStore();
+  const { filters, setFilters } = useAppStore();
 
   const typeOptions: Array<{ value: PetType | "all"; label: string; icon: string }> = [
     { value: "all", label: "Todos", icon: "🏠" },

@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, MapPin, Mail, Phone, User, Heart } from "lucide-react";
-import { usePetStore } from "@/store/petStore";
 import { useEffect, useState } from "react";
 import { Pet } from "@/types/pet";
+import { useAppStore } from "@/store/store";
 
 const ageLabels = {
   puppy: "Cachorro",
@@ -23,9 +23,9 @@ const sizeLabels = {
 const PetDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const fetchPetByID = usePetStore((state) => state.fetchPetByID);
+  const fetchPetByID = useAppStore((state) => state.fetchPetByID);
   const [pet, setPet] = useState<Pet | undefined>(undefined);
-  const userLogin = usePetStore((state) => state.userLogin)
+  const userLogin = useAppStore((state) => state.userLogin)
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -29,6 +29,19 @@ export class AuthService {
             throw error;
         }
     }
+    async getUser(userId: string) {
+        try {
+            const url = this.authBase + `/profile/${userId}`
+            const data = await api.get(url);
+            return data;
+
+        } catch (error) {
+            if (isAxiosError(error) && error.response) {
+                throw new Error(error.response.data.error);
+            }
+            throw error;
+        }
+    }
 }
 
 const authService = new AuthService();

@@ -33,7 +33,31 @@ export class AnimalService {
         try {
             const url = this.authBase;
             const data = await api.post(url, animalData);
-            return data;
+            return { data: data.data, status: data.status };
+        } catch (error) {
+            if (isAxiosError(error) && error.response) {
+                throw new Error(error.response.data.error);
+            }
+            throw error;
+        }
+    }
+    async updateAnimal(animalId: string, animalData: AddPetData) {
+        try {
+            const url = this.authBase + `/${animalId}`;
+            const data = await api.put(url, animalData);
+            return { data: data.data, status: data.status };
+        } catch (error) {
+            if (isAxiosError(error) && error.response) {
+                throw new Error(error.response.data.error);
+            }
+            throw error;
+        }
+    }
+    async deleteAnimal(animalId: string) {
+        try {
+            const url = this.authBase + `/${animalId}`;
+            const data = await api.delete(url);
+            return { data: data.data, status: data.status };
         } catch (error) {
             if (isAxiosError(error) && error.response) {
                 throw new Error(error.response.data.error);
