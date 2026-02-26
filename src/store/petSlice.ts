@@ -42,5 +42,10 @@ export const petSlice = (set, get) => ({
     const data = await animalService.deleteAnimal(id);
     await get().fetchPets();
     return data.status;
+  },
+  toggleFavorite: async (animalId, favorite, idUsuario) => {
+    const data = await animalService.toggleFavorite(animalId, favorite, idUsuario)
+    await get().getActualUser(idUsuario);
+    return data
   }
 });

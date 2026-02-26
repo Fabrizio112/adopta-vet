@@ -7,7 +7,8 @@ export interface User {
     repeat_password: string
     telphone: string,
     _id: string,
-    animals: Pet[]
+    animals: Pet[],
+    favorites: Pet[]
 }
 
 export type LoginData = Pick<User, "email" | "password">;

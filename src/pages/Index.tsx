@@ -21,7 +21,6 @@ const Index = () => {
     return true;
   }), [pets, filters])
 
-
   useEffect(() => {
     fetchPets();
   }, [])
@@ -92,7 +91,7 @@ const Index = () => {
               ) : (
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {filteredPets.map((pet) => (
-                    <PetCard key={pet._id} pet={pet} />
+                    <PetCard key={pet._id} pet={pet} favorites={userLogin.favorites} />
                   ))}
                 </div>
               )}

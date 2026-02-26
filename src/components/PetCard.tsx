@@ -4,9 +4,14 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Pet } from "@/types/pet";
+import { User } from "@/types/user";
+import { useMemo } from "react";
+import { useAppStore } from "@/store/store";
+import Swal from "sweetalert2";
 
 interface PetCardProps {
   pet: Pet;
+  favorites: User["favorites"]
 }
 
 const ageLabels = {
@@ -22,7 +27,24 @@ const sizeLabels = {
   large: "Grande",
 };
 
-const PetCard = ({ pet }: PetCardProps) => {
+
+const PetCard = ({ pet, favorites }: PetCardProps) => {
+  const isFavorite = useMemo(() => favorites && favorites.some(fav => fav._id == pet._id), [favorites])
+  const userLogin = useAppStore((state) => state.userLogin)
+  const toggleFavorite = useAppStore((state) => state.toggleFavorite)
+  const handleFavorite = async (animalId, isFavorite, userId) => {
+    const status = await toggleFavorite(animalId, isFavorite, userId)
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: status?.message,
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true
+    });
+  }
+
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg">
       <div className="relative aspect-square overflow-hidden">
@@ -33,7 +55,8 @@ const PetCard = ({ pet }: PetCardProps) => {
         />
         <Button
           size="icon"
-          variant="secondary"
+          variant={(isFavorite) ? "favorite" : "secondary"}
+          onClick={() => handleFavorite(pet._id, isFavorite, userLogin._id)}
           className="absolute right-3 top-3 rounded-full opacity-0 transition-opacity group-hover:opacity-100"
         >
           <Heart className="h-4 w-4" />

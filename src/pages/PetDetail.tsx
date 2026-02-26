@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, MapPin, Mail, Phone, User, Heart } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pet } from "@/types/pet";
 import { useAppStore } from "@/store/store";
+import Swal from "sweetalert2";
 
 const ageLabels = {
   puppy: "Cachorro",
@@ -27,6 +28,7 @@ const PetDetail = () => {
   const [pet, setPet] = useState<Pet | undefined>(undefined);
   const userLogin = useAppStore((state) => state.userLogin)
   const [loading, setLoading] = useState(true);
+  const toggleFavorite = useAppStore((state) => state.toggleFavorite)
 
   useEffect(() => {
     fetchPetByID(id).then((data) => {
@@ -34,6 +36,22 @@ const PetDetail = () => {
       setLoading(false);
     });
   }, [])
+
+  const isFavorite = useMemo(() => userLogin.favorites.some(fav => fav._id == pet?._id), [pet, userLogin.favorites])
+  const handleFavorite = async (animalId, isFavorite, userId) => {
+    const data = await toggleFavorite(animalId, isFavorite, userId)
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: data?.message,
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true
+    });
+
+  }
+
 
   if (!pet) {
     return (
@@ -82,7 +100,7 @@ const PetDetail = () => {
                   <h1 className="mb-2 text-4xl font-bold text-foreground">{pet.name}</h1>
                   <p className="text-xl text-muted-foreground">{pet.breed}</p>
                 </div>
-                <Button size="icon" className="rounded-full">
+                <Button size="icon" className="rounded-ful" variant={isFavorite ? "favorite" : "secondary"} onClick={() => handleFavorite(pet._id, isFavorite, userLogin._id)}>
                   <Heart className="h-5 w-5" />
                 </Button>
               </div>

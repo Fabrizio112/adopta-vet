@@ -65,6 +65,22 @@ export class AnimalService {
             throw error;
         }
     }
+    async toggleFavorite(animalId: string, isFavorite: boolean, userId: string) {
+        const url = this.authBase + `/${animalId}/favorite`;
+
+        if (isFavorite) {
+            const response = await api.delete(url, {
+                data: {
+                    userId
+                }
+            });
+            return response.data;
+        } else {
+            const response = await api.post(url, { userId });
+            return response.data;
+        }
+    }
+
 }
 
 const animalService = new AnimalService();

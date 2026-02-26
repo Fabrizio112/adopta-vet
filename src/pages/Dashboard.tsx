@@ -64,6 +64,7 @@ const Dashboard = () => {
   const setEditPet = useAppStore((state) => state.setEditPet);
   const getActualUser = useAppStore((state) => state.getActualUser);
   const deletePet = useAppStore((state) => state.deletePet);
+  const toggleFavorite = useAppStore((state) => state.toggleFavorite)
 
   const [profileData, setProfileData] = useState({
     name: userLogin.name || "Usuario Demo",
@@ -107,7 +108,18 @@ const Dashboard = () => {
       }
     });
   }
-
+  const handleFavorite = async (pet, valid, user) => {
+    await toggleFavorite(pet, valid, user)
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: 'Favorito Eliminado correctamente',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true
+    });
+  }
 
   useEffect(() => {
     getActualUser(userLogin._id);
@@ -337,6 +349,11 @@ const Dashboard = () => {
                     </CardContent>
                   </Card>
                 ))}
+                {userLogin.animals?.length === 0 && (
+                  <p className="text-center text-sm text-muted-foreground">
+                    No has publicado ninguna mascota aún.
+                  </p>
+                )}
               </div>
             </div>
           </TabsContent>
@@ -349,7 +366,7 @@ const Dashboard = () => {
               </h2>
 
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {mockFavorites.map((pet) => (
+                {userLogin.favorites?.map((pet) => (
                   <Card key={pet._id} className="overflow-hidden border-border">
                     <div className="relative aspect-video bg-muted">
                       <img
@@ -357,7 +374,8 @@ const Dashboard = () => {
                         alt={pet.name}
                         className="h-full w-full object-cover"
                       />
-                      <button className="absolute right-2 top-2 rounded-full bg-card/80 p-1.5 text-destructive backdrop-blur-sm transition-colors hover:bg-card">
+                      <button className="absolute right-2 top-2 rounded-full bg-card/80 p-1.5 text-destructive backdrop-blur-sm transition-colors hover:bg-card"
+                        onClick={() => handleFavorite(pet._id, true, userLogin._id)}>
                         <Heart className="h-4 w-4 fill-current" />
                       </button>
                     </div>
@@ -378,6 +396,11 @@ const Dashboard = () => {
                     </CardContent>
                   </Card>
                 ))}
+                {userLogin.favorites?.length === 0 && (
+                  <p className="text-center text-sm text-muted-foreground">
+                    No has guardado ninguna mascota aún.
+                  </p>
+                )}
               </div>
             </div>
           </TabsContent>
