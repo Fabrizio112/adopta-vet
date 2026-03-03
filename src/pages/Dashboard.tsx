@@ -19,30 +19,6 @@ import {
 import { useAppStore } from "@/store/store";
 import Swal from "sweetalert2";
 
-// Mock data for visual purposes
-
-const mockFavorites = [
-  {
-    _id: "3",
-    name: "Rocky",
-    type: "dog",
-    breed: "Pastor Alemán",
-    age: "adult",
-    size: "large",
-    imageUrl: "/placeholder.svg",
-    location: "Rosario",
-  },
-  {
-    _id: "4",
-    name: "Nala",
-    type: "cat",
-    breed: "Persa",
-    age: "young",
-    size: "medium",
-    imageUrl: "/placeholder.svg",
-    location: "Mendoza",
-  },
-];
 
 const ageLabels: Record<string, string> = {
   puppy: "Cachorro",
@@ -67,21 +43,15 @@ const Dashboard = () => {
   const toggleFavorite = useAppStore((state) => state.toggleFavorite)
 
   const [profileData, setProfileData] = useState({
-    name: userLogin.name || "Usuario Demo",
-    email: userLogin.email || "demo@email.com",
-    telphone: userLogin.telphone || "+54 11 1234-5678",
+    name: "",
+    email: "",
+    telphone: "",
   });
-  const [isEditing, setIsEditing] = useState(false);
-
   const handleLogout = () => {
     localStorage.removeItem("userLogin");
-    setUserLogin({} as any);
+    localStorage.removeItem("AUTH_TOKEN");
+    setUserLogin(null);
     navigate("/");
-  };
-
-  const handleSaveProfile = () => {
-    setIsEditing(false);
-    // Aquí se conectará con el backend
   };
 
   const handleDelete = async (id: string) => {
@@ -108,8 +78,8 @@ const Dashboard = () => {
       }
     });
   }
-  const handleFavorite = async (pet, valid, user) => {
-    await toggleFavorite(pet, valid, user)
+  const handleFavorite = async (pet, valid,) => {
+    await toggleFavorite(pet, valid)
     Swal.fire({
       toast: true,
       position: 'top-end',
@@ -122,10 +92,21 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
-    getActualUser(userLogin._id);
+    getActualUser();
   }, [])
-
-  return (
+  useEffect(() => {
+    if (!userLogin) {
+      navigate("/login")
+    };
+    if (userLogin) {
+      setProfileData({
+        name: userLogin.name,
+        email: userLogin.email,
+        telphone: userLogin.telphone,
+      });
+    }
+  }, [userLogin])
+  if (userLogin) return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card">
@@ -180,29 +161,6 @@ const Dashboard = () => {
             <Card className="border-border">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-xl">Datos personales</CardTitle>
-                {!isEditing ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    <Pencil className="mr-2 h-4 w-4" />
-                    Editar
-                  </Button>
-                ) : (
-                  <div className="flex gap-2">
-                    <Button size="sm" onClick={handleSaveProfile}>
-                      Guardar
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setIsEditing(false)}
-                    >
-                      Cancelar
-                    </Button>
-                  </div>
-                )}
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Avatar */}
@@ -210,65 +168,26 @@ const Dashboard = () => {
                   <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-3xl">
                     {profileData.name.charAt(0).toUpperCase()}
                   </div>
-                  {isEditing && (
-                    <Button variant="outline" size="sm" disabled>
-                      Cambiar foto
-                    </Button>
-                  )}
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Nombre completo</Label>
-                    {isEditing ? (
-                      <Input
-                        value={profileData.name}
-                        onChange={(e) =>
-                          setProfileData({ ...profileData, name: e.target.value })
-                        }
-                      />
-                    ) : (
-                      <p className="rounded-md border border-border bg-muted/50 px-3 py-2 text-sm">
-                        {profileData.name}
-                      </p>
-                    )}
+                    <p className="rounded-md border border-border bg-muted/50 px-3 py-2 text-sm">
+                      {profileData.name}
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label>Correo electrónico</Label>
-                    {isEditing ? (
-                      <Input
-                        type="email"
-                        value={profileData.email}
-                        onChange={(e) =>
-                          setProfileData({
-                            ...profileData,
-                            email: e.target.value,
-                          })
-                        }
-                      />
-                    ) : (
-                      <p className="rounded-md border border-border bg-muted/50 px-3 py-2 text-sm">
-                        {profileData.email}
-                      </p>
-                    )}
+                    <p className="rounded-md border border-border bg-muted/50 px-3 py-2 text-sm">
+                      {profileData.email}
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label>Teléfono</Label>
-                    {isEditing ? (
-                      <Input
-                        value={profileData.telphone}
-                        onChange={(e) =>
-                          setProfileData({
-                            ...profileData,
-                            telphone: e.target.value,
-                          })
-                        }
-                      />
-                    ) : (
-                      <p className="rounded-md border border-border bg-muted/50 px-3 py-2 text-sm">
-                        {profileData.telphone}
-                      </p>
-                    )}
+                    <p className="rounded-md border border-border bg-muted/50 px-3 py-2 text-sm">
+                      {profileData.telphone}
+                    </p>
                   </div>
                 </div>
 
@@ -330,7 +249,7 @@ const Dashboard = () => {
                         📍 {animal.location}
                       </p>
                       <div className="flex gap-2">
-                        <Link to="/editar" className="flex-1" onClick={() => setEditPet(animal)}>
+                        <Link to={`/editar/${animal._id}`} className="flex-1" onClick={() => setEditPet(animal)}>
                           <Button variant="outline" size="sm" className="w-full">
                             <Pencil className="mr-1 h-3 w-3" />
                             Editar
@@ -375,7 +294,7 @@ const Dashboard = () => {
                         className="h-full w-full object-cover"
                       />
                       <button className="absolute right-2 top-2 rounded-full bg-card/80 p-1.5 text-destructive backdrop-blur-sm transition-colors hover:bg-card"
-                        onClick={() => handleFavorite(pet._id, true, userLogin._id)}>
+                        onClick={() => handleFavorite(pet._id, true)}>
                         <Heart className="h-4 w-4 fill-current" />
                       </button>
                     </div>

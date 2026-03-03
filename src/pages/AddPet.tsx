@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,10 +11,12 @@ import { PetType, PetAge, PetSize, AddPetData, PetLocation } from "@/types/pet";
 import { ProvinciaArgentina } from "@/helper";
 import Swal from "sweetalert2";
 import { useAppStore } from "@/store/store";
+import { User } from "@/types/user";
 
 const AddPet = () => {
   const navigate = useNavigate();
   const addPet = useAppStore((state) => state.addPet);
+  const getActualUser = useAppStore((state) => state.getActualUser)
   const userLogin = useAppStore((state) => state.userLogin);
 
   const [formData, setFormData] = useState<AddPetData>({
@@ -26,7 +28,7 @@ const AddPet = () => {
     description: "",
     location: "" as PetLocation,
     imageUrl: "",
-    user: ""
+    user: {} as User
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,7 +40,7 @@ const AddPet = () => {
     try {
       const response = await addPet({
         ...formData,
-        user: userLogin._id,
+        user: userLogin,
         imageUrl: formData.imageUrl || formData.type === "dog" ? "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80" : "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=80",
       })
       if (response === 201) {
@@ -61,6 +63,15 @@ const AddPet = () => {
 
 
   };
+
+  useEffect(() => {
+    getActualUser()
+  }, [])
+  useEffect(() => {
+    if (!userLogin) {
+      navigate("/login")
+    }
+  }, [userLogin])
 
   return (
     <div className="min-h-screen bg-background">

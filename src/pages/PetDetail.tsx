@@ -27,19 +27,17 @@ const PetDetail = () => {
   const fetchPetByID = useAppStore((state) => state.fetchPetByID);
   const [pet, setPet] = useState<Pet | undefined>(undefined);
   const userLogin = useAppStore((state) => state.userLogin)
-  const [loading, setLoading] = useState(true);
   const toggleFavorite = useAppStore((state) => state.toggleFavorite)
 
   useEffect(() => {
     fetchPetByID(id).then((data) => {
       setPet(data);
-      setLoading(false);
     });
   }, [])
-
-  const isFavorite = useMemo(() => userLogin.favorites.some(fav => fav._id == pet?._id), [pet, userLogin.favorites])
-  const handleFavorite = async (animalId, isFavorite, userId) => {
-    const data = await toggleFavorite(animalId, isFavorite, userId)
+  const isFavorite = useMemo(() => userLogin && userLogin.favorites.some(fav => fav._id == pet?._id), [pet])
+  const handleFavorite = async (animalId, isFavorite,) => {
+    if (isFavorite == null) return
+    const data = await toggleFavorite(animalId, isFavorite)
     Swal.fire({
       toast: true,
       position: 'top-end',
@@ -129,24 +127,24 @@ const PetDetail = () => {
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <User className="h-5 w-5 text-muted-foreground" />
-                    <span className="text-foreground">{userLogin.name}</span>
+                    <span className="text-foreground">{pet.user.name}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Mail className="h-5 w-5 text-muted-foreground" />
                     <a
-                      href={`mailto:${userLogin.email}`}
+                      href={`mailto:${pet.user.email}`}
                       className="text-primary hover:underline"
                     >
-                      {userLogin.email}
+                      {pet.user.email}
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
                     <Phone className="h-5 w-5 text-muted-foreground" />
                     <a
-                      href={`tel:${userLogin.telphone}`}
+                      href={`tel:${pet.user.telphone}`}
                       className="text-primary hover:underline"
                     >
-                      {userLogin.telphone}
+                      {pet.user.telphone}
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
@@ -159,14 +157,14 @@ const PetDetail = () => {
 
             <div className="flex gap-4">
               <Button size="lg" className="w-full">
-                <a href={`mailto:${userLogin.email}`} className="flex hover:underline">
+                <a href={`mailto:${pet.user.email}`} className="flex hover:underline">
                   <Mail className="mr-2 h-5 w-5" />
                   Contactar por Correo
                 </a>
               </Button>
               <Button variant="secondary" size="lg" className="w-full"  >
 
-                <a href={`https://wa.me/${userLogin.telphone}`} className="flex hover:underline">
+                <a href={`https://wa.me/${pet.user.telphone}`} className="flex hover:underline">
                   <Phone className="mr-2 h-5 w-5" />
                   Contactar por Whatsapp
                 </a>

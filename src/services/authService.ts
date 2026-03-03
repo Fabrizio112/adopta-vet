@@ -29,9 +29,9 @@ export class AuthService {
             throw error;
         }
     }
-    async getUser(userId: string) {
+    async getUser() {
         try {
-            const url = this.authBase + `/profile/${userId}`
+            const url = this.authBase + `/profile`
             const data = await api.get(url);
             return data;
 

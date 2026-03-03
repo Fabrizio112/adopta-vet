@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,9 +14,10 @@ import { useAppStore } from "@/store/store";
 
 const EditPet = () => {
   const navigate = useNavigate();
-  const userLogin = useAppStore((state) => state.userLogin);
   const editPet = useAppStore((state) => state.editPet);
   const updateAnimal = useAppStore((state) => state.updatePet);
+  const getActualUser = useAppStore((state) => state.getActualUser)
+  const userLogin = useAppStore((state) => state.userLogin)
 
   const [formData, setFormData] = useState<AddPetData>(editPet);
 
@@ -54,8 +55,15 @@ const EditPet = () => {
 
 
   };
-
-  return (
+  useEffect(() => {
+    getActualUser()
+  }, [])
+  useEffect(() => {
+    if (!userLogin) {
+      navigate("/login")
+    }
+  }, [userLogin])
+  if (editPet) return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">

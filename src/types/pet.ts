@@ -18,7 +18,7 @@ export interface Pet {
   location: PetLocation;
   createdAt: Date;
   updatedAt: Date;
-  user: User["_id"];
+  user: User;
 }
 
 export interface PetFilters {

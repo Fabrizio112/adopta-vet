@@ -20,7 +20,7 @@ const App = () => (
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/mascota/:id" element={<PetDetail />} />
         <Route path="/publicar" element={<AddPet />} />
-        <Route path="/editar" element={<EditPet />} />
+        <Route path="/editar/:id" element={<EditPet />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Register />} />
         <Route path="/recuperar" element={<ResetPassword />} />

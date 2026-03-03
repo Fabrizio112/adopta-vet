@@ -33,6 +33,7 @@ const Login = () => {
         })
         setUserLogin(data.data.user)
         localStorage.setItem("userLogin", JSON.stringify(data.data.user))
+        localStorage.setItem("AUTH_TOKEN", data.data.token)
         navigate("/")
       }
     } catch (error) {

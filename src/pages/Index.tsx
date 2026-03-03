@@ -33,7 +33,7 @@ const Index = () => {
             <span className="text-xl font-bold text-foreground">AdoptaPet</span>
           </Link>
           <div className="flex gap-2">
-            {!userLogin._id ? (
+            {!userLogin ? (
               <Button variant="blue" asChild>
                 <Link to="/login">
                   <User className="mr-2 h-4 w-4" />
@@ -91,7 +91,7 @@ const Index = () => {
               ) : (
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {filteredPets.map((pet) => (
-                    <PetCard key={pet._id} pet={pet} favorites={userLogin.favorites} />
+                    <PetCard key={pet._id} pet={pet} favorites={userLogin ? userLogin.favorites : null} />
                   ))}
                 </div>
               )}

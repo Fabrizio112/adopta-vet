@@ -30,10 +30,9 @@ const sizeLabels = {
 
 const PetCard = ({ pet, favorites }: PetCardProps) => {
   const isFavorite = useMemo(() => favorites && favorites.some(fav => fav._id == pet._id), [favorites])
-  const userLogin = useAppStore((state) => state.userLogin)
   const toggleFavorite = useAppStore((state) => state.toggleFavorite)
-  const handleFavorite = async (animalId, isFavorite, userId) => {
-    const status = await toggleFavorite(animalId, isFavorite, userId)
+  const handleFavorite = async (animalId, isFavorite) => {
+    const status = await toggleFavorite(animalId, isFavorite)
     Swal.fire({
       toast: true,
       position: 'top-end',
@@ -44,7 +43,6 @@ const PetCard = ({ pet, favorites }: PetCardProps) => {
       timerProgressBar: true
     });
   }
-
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg">
       <div className="relative aspect-square overflow-hidden">
@@ -56,7 +54,7 @@ const PetCard = ({ pet, favorites }: PetCardProps) => {
         <Button
           size="icon"
           variant={(isFavorite) ? "favorite" : "secondary"}
-          onClick={() => handleFavorite(pet._id, isFavorite, userLogin._id)}
+          onClick={() => handleFavorite(pet._id, isFavorite)}
           className="absolute right-3 top-3 rounded-full opacity-0 transition-opacity group-hover:opacity-100"
         >
           <Heart className="h-4 w-4" />

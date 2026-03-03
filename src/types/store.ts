@@ -4,7 +4,7 @@ import { User } from "./user";
 type UserSliceProps = {
     userLogin: User;
     setUserLogin: (data: User) => void;
-    getActualUser: (id: string) => Promise<void>;
+    getActualUser: () => Promise<void>;
 }
 
 type PetSliceProps = {
@@ -18,7 +18,7 @@ type PetSliceProps = {
     setEditPet: (pet: Pet | null) => void;
     updatePet: (data: { id: string, petData: AddPetData }) => Promise<number>;
     deletePet: (id: string) => Promise<number>;
-    toggleFavorite: (animalId: Pet["_id"], favorite: boolean, idUsuario: User["_id"]) => Promise<number>
+    toggleFavorite: (animalId: Pet["_id"], favorite: boolean) => Promise<{ message: string }>
 }
 
 export type AppStore = UserSliceProps & PetSliceProps;

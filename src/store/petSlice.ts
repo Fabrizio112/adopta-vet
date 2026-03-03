@@ -43,9 +43,9 @@ export const petSlice = (set, get) => ({
     await get().fetchPets();
     return data.status;
   },
-  toggleFavorite: async (animalId, favorite, idUsuario) => {
-    const data = await animalService.toggleFavorite(animalId, favorite, idUsuario)
-    await get().getActualUser(idUsuario);
+  toggleFavorite: async (animalId, favorite) => {
+    const data = await animalService.toggleFavorite(animalId, favorite)
+    await get().getActualUser();
     return data
   }
 });
