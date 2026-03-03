@@ -98,7 +98,7 @@ const PetDetail = () => {
                   <h1 className="mb-2 text-4xl font-bold text-foreground">{pet.name}</h1>
                   <p className="text-xl text-muted-foreground">{pet.breed}</p>
                 </div>
-                <Button size="icon" className="rounded-ful" variant={isFavorite ? "favorite" : "secondary"} onClick={() => handleFavorite(pet._id, isFavorite, userLogin._id)}>
+                <Button size="icon" className="rounded-ful" variant={isFavorite ? "favorite" : "secondary"} onClick={() => handleFavorite(pet._id, isFavorite)}>
                   <Heart className="h-5 w-5" />
                 </Button>
               </div>
