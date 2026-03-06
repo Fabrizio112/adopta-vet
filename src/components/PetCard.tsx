@@ -8,6 +8,7 @@ import { User } from "@/types/user";
 import { useMemo } from "react";
 import { useAppStore } from "@/store/store";
 import Swal from "sweetalert2";
+import { useFavorites } from "@/hooks/useFavorites";
 
 interface PetCardProps {
   pet: Pet;
@@ -30,18 +31,24 @@ const sizeLabels = {
 
 const PetCard = ({ pet, favorites }: PetCardProps) => {
   const isFavorite = useMemo(() => favorites && favorites.some(fav => fav._id == pet._id), [favorites])
-  const toggleFavorite = useAppStore((state) => state.toggleFavorite)
+  const { toggleFavorite } = useFavorites()
   const handleFavorite = async (animalId, isFavorite) => {
-    const status = await toggleFavorite(animalId, isFavorite)
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'success',
-      title: status?.message,
-      showConfirmButton: false,
-      timer: 2000,
-      timerProgressBar: true
-    });
+    if (isFavorite == null) return
+    toggleFavorite.mutate({ animalId, isFavorite }, {
+      onSuccess: (data) => {
+        console.log(data)
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: data?.message,
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+        });
+      }
+    })
+
   }
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg">

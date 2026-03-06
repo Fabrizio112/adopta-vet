@@ -17,7 +17,6 @@ const Login = () => {
     password: ""
   })
   const [showPassword, setShowPassword] = useState(false);
-  const setUserLogin = useAppStore(state => state.setUserLogin)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,8 +30,6 @@ const Login = () => {
           timer: 2000,
           showConfirmButton: false
         })
-        setUserLogin(data.data.user)
-        localStorage.setItem("userLogin", JSON.stringify(data.data.user))
         localStorage.setItem("AUTH_TOKEN", data.data.token)
         navigate("/")
       }

@@ -4,16 +4,17 @@ import { PlusCircle, User } from "lucide-react";
 import Hero from "@/components/Hero";
 import PetCard from "@/components/PetCard";
 import PetFilters from "@/components/PetFilters";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useAppStore } from "@/store/store";
+import { useGetPets } from "@/hooks/useGetPets";
+import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
-  const fetchPets = useAppStore((state) => state.fetchPets);
-  const pets = useAppStore((state) => state.pets)
   const filters = useAppStore((state) => state.filters)
-  const userLogin = useAppStore(state => state.userLogin)
+  const { pets, isLoading, isError } = useGetPets()
+  const { data: userLogin } = useAuth()
 
-  const filteredPets = useMemo(() => pets.filter((pet) => {
+  const filteredPets = useMemo(() => (pets ?? []).filter((pet) => {
     if (filters.type !== "all" && pet.type !== filters.type) return false;
     if (filters.age !== "all" && pet.age !== filters.age) return false;
     if (filters.size !== "all" && pet.size !== filters.size) return false;
@@ -21,9 +22,6 @@ const Index = () => {
     return true;
   }), [pets, filters])
 
-  useEffect(() => {
-    fetchPets();
-  }, [])
   return (
     <div className="min-h-screen">
       <header className="border-b border-border bg-card">
@@ -74,13 +72,14 @@ const Index = () => {
           </div>
 
           <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
-            <aside className="rounded-lg border border-border bg-card p-6">
+            <aside className="rounded-lg border border-border bg-card p-6 text-center md:text-start">
               <h2 className="mb-4 text-lg font-bold text-foreground">Filtros</h2>
               <PetFilters />
             </aside>
 
             <div>
-              {filteredPets.length === 0 ? (
+              {isLoading && <p> Cargando Animales ...</p>}
+              {(filteredPets.length === 0 && isError) ? (
                 <div className="flex min-h-[400px] items-center justify-center rounded-lg border border-dashed border-border">
                   <div className="text-center">
                     <p className="text-lg text-muted-foreground">

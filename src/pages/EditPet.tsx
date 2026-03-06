@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,60 +10,71 @@ import { ArrowLeft } from "lucide-react";
 import { PetType, PetAge, PetSize, AddPetData, PetLocation } from "@/types/pet";
 import { ProvinciaArgentina } from "@/helper";
 import Swal from "sweetalert2";
-import { useAppStore } from "@/store/store";
+import { useAuth } from "@/hooks/useAuth";
+import { usePets } from "@/hooks/usePets";
+import { usePet } from "@/hooks/usePet";
 
 const EditPet = () => {
   const navigate = useNavigate();
-  const editPet = useAppStore((state) => state.editPet);
-  const updateAnimal = useAppStore((state) => state.updatePet);
-  const getActualUser = useAppStore((state) => state.getActualUser)
-  const userLogin = useAppStore((state) => state.userLogin)
+  const param = useParams()
+  const { data: userLogin, isLoading: isLoadingUser } = useAuth()
+  const { pet, isLoading } = usePet(param.id)
+  const { editPet } = usePets()
 
-  const [formData, setFormData] = useState<AddPetData>(editPet);
+
+  const [formData, setFormData] = useState<AddPetData | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData) return;
     if (!formData.name || !formData.type || !formData.breed || !formData.age ||
       !formData.size || !formData.description || !formData.location) {
       return;
     }
     try {
-      const response = await updateAnimal({
-        id: editPet._id,
-        petData: {
+      editPet.mutate({
+        animalId: param.id, animalData: {
           ...formData,
-          imageUrl: formData.imageUrl || formData.type === "dog" ? "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80" : "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=80"
+          imageUrl: formData.imageUrl ? formData.imageUrl : formData.type === "dog" ? "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80" : "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=80"
+        }
+      }, {
+        onSuccess: () => {
+          Swal.fire({
+            icon: "success",
+            title: "Mascota actualizada",
+            text: "¡La mascota se ha actualizado correctamente!",
+            timer: 2000,
+            showConfirmButton: false
+          })
+          navigate("/");
         }
       })
-      if (response === 200) {
-        Swal.fire({
-          icon: "success",
-          title: "Mascota actualizada",
-          text: "¡La mascota se ha actualizado correctamente!",
-          timer: 2000,
-          showConfirmButton: false
-        })
-        navigate("/");
-      }
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error al actualizar mascota",
-        text: error.message,
-      })
+      if (error instanceof Error) {
+        Swal.fire({
+          icon: "error",
+          title: "Error al actualizar mascota",
+          text: error.message,
+        })
+      }
+
     }
 
 
   };
   useEffect(() => {
-    getActualUser()
-  }, [])
-  useEffect(() => {
-    if (!userLogin) {
+    if (!userLogin && !isLoadingUser) {
       navigate("/login")
     }
   }, [userLogin])
-  if (editPet) return (
+  useEffect(() => {
+    if (pet) {
+      setFormData(pet)
+    }
+  }, [pet])
+
+  if (isLoading || !formData) return <p> Cargando ...</p>
+  if (formData && !isLoading) return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
@@ -213,7 +224,7 @@ const EditPet = () => {
                 />
               </div>
               <Button type="submit" size="lg" className="w-full">
-                Publicar mascota
+                Editar mascota
               </Button>
             </form>
           </CardContent>

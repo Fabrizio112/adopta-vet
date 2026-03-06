@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, MapPin, Mail, Phone, User, Heart } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { Pet } from "@/types/pet";
+import { useMemo } from "react";
 import { useAppStore } from "@/store/store";
 import Swal from "sweetalert2";
+import { usePet } from "@/hooks/usePet";
+import { useAuth } from "@/hooks/useAuth";
+import { useFavorites } from "@/hooks/useFavorites";
 
 const ageLabels = {
   puppy: "Cachorro",
@@ -24,34 +26,38 @@ const sizeLabels = {
 const PetDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const fetchPetByID = useAppStore((state) => state.fetchPetByID);
-  const [pet, setPet] = useState<Pet | undefined>(undefined);
-  const userLogin = useAppStore((state) => state.userLogin)
-  const toggleFavorite = useAppStore((state) => state.toggleFavorite)
+  const { toggleFavorite } = useFavorites()
+  const { data: userLogin } = useAuth()
 
-  useEffect(() => {
-    fetchPetByID(id).then((data) => {
-      setPet(data);
-    });
-  }, [])
+  const { pet, isLoading, isError } = usePet(id)
+
   const isFavorite = useMemo(() => userLogin && userLogin.favorites.some(fav => fav._id == pet?._id), [pet])
-  const handleFavorite = async (animalId, isFavorite,) => {
+  const handleFavorite = (animalId, isFavorite,) => {
     if (isFavorite == null) return
-    const data = await toggleFavorite(animalId, isFavorite)
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'success',
-      title: data?.message,
-      showConfirmButton: false,
-      timer: 2000,
-      timerProgressBar: true
-    });
+    toggleFavorite.mutate({ animalId, isFavorite }, {
+      onSuccess: (data) => {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: data?.message,
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+        });
+      }
+    })
+
 
   }
 
+  if (isLoading) return (
+    <div className="flex min-h-screen items-center justify-center">
+      <p className="mb-4 text-2xl font-bold"> Cargando Animal ....</p>
+    </div>
+  )
 
-  if (!pet) {
+  if (!pet && isError) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
@@ -62,7 +68,7 @@ const PetDetail = () => {
     );
   }
 
-  return (
+  if (pet) return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">

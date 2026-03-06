@@ -34,7 +34,7 @@ const PetFilters = () => {
     <div className="space-y-6">
       <div>
         <h3 className="mb-3 text-sm font-semibold text-foreground">Tipo de mascota</h3>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 justify-center md:justify-start">
           {typeOptions.map((option) => (
             <Button
               key={option.value}
@@ -51,7 +51,7 @@ const PetFilters = () => {
 
       <div>
         <h3 className="mb-3 text-sm font-semibold text-foreground">Edad</h3>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 justify-center md:justify-start">
           {ageOptions.map((option) => (
             <Button
               key={option.value}
@@ -67,7 +67,7 @@ const PetFilters = () => {
 
       <div>
         <h3 className="mb-3 text-sm font-semibold text-foreground">Tamaño</h3>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 justify-center md:justify-start">
           {sizeOptions.map((option) => (
             <Button
               key={option.value}
@@ -91,7 +91,7 @@ const PetFilters = () => {
             <SelectValue placeholder="Todas las provincias" />
           </SelectTrigger>
           <SelectContent className="z-50 bg-card border border-border shadow-lg">
-            <SelectItem value="all">Todas las provincias</SelectItem>
+            <SelectItem className="w-100 text-center" value="all">Todas las provincias</SelectItem>
             {provincias.map((provincia) => (
               <SelectItem key={provincia} value={provincia}>
                 {provincia}

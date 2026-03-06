@@ -10,14 +10,14 @@ import { ArrowLeft } from "lucide-react";
 import { PetType, PetAge, PetSize, AddPetData, PetLocation } from "@/types/pet";
 import { ProvinciaArgentina } from "@/helper";
 import Swal from "sweetalert2";
-import { useAppStore } from "@/store/store";
 import { User } from "@/types/user";
+import { usePets } from "@/hooks/usePets";
+import { useAuth } from "@/hooks/useAuth";
 
 const AddPet = () => {
   const navigate = useNavigate();
-  const addPet = useAppStore((state) => state.addPet);
-  const getActualUser = useAppStore((state) => state.getActualUser)
-  const userLogin = useAppStore((state) => state.userLogin);
+  const { addPet } = usePets()
+  const { data: userLogin, isLoading } = useAuth()
 
   const [formData, setFormData] = useState<AddPetData>({
     name: "",
@@ -38,21 +38,22 @@ const AddPet = () => {
       return;
     }
     try {
-      const response = await addPet({
+      addPet.mutate({
         ...formData,
         user: userLogin,
         imageUrl: formData.imageUrl || formData.type === "dog" ? "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80" : "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=80",
+      }, {
+        onSuccess: () => {
+          Swal.fire({
+            icon: "success",
+            title: "Mascota agregada",
+            text: "¡La mascota se ha agregado correctamente!",
+            timer: 2000,
+            showConfirmButton: false
+          })
+          navigate("/");
+        }
       })
-      if (response === 201) {
-        Swal.fire({
-          icon: "success",
-          title: "Mascota agregada",
-          text: "¡La mascota se ha agregado correctamente!",
-          timer: 2000,
-          showConfirmButton: false
-        })
-        navigate("/");
-      }
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -65,10 +66,7 @@ const AddPet = () => {
   };
 
   useEffect(() => {
-    getActualUser()
-  }, [])
-  useEffect(() => {
-    if (!userLogin) {
+    if (!userLogin && !isLoading) {
       navigate("/login")
     }
   }, [userLogin])

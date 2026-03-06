@@ -16,8 +16,11 @@ import {
   Trash2,
   User,
 } from "lucide-react";
-import { useAppStore } from "@/store/store";
 import Swal from "sweetalert2";
+import { useAuth } from "@/hooks/useAuth";
+import { usePets } from "@/hooks/usePets";
+import { useQueryClient } from "@tanstack/react-query";
+import { useFavorites } from "@/hooks/useFavorites";
 
 
 const ageLabels: Record<string, string> = {
@@ -35,12 +38,11 @@ const sizeLabels: Record<string, string> = {
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const userLogin = useAppStore((state) => state.userLogin);
-  const setUserLogin = useAppStore((state) => state.setUserLogin);
-  const setEditPet = useAppStore((state) => state.setEditPet);
-  const getActualUser = useAppStore((state) => state.getActualUser);
-  const deletePet = useAppStore((state) => state.deletePet);
-  const toggleFavorite = useAppStore((state) => state.toggleFavorite)
+  const { deletePet } = usePets()
+  const { toggleFavorite } = useFavorites()
+  const { data: userLogin, isLoading: isLoadingAuth, } = useAuth()
+  const queryClient = useQueryClient()
+
 
   const [profileData, setProfileData] = useState({
     name: "",
@@ -48,9 +50,9 @@ const Dashboard = () => {
     telphone: "",
   });
   const handleLogout = () => {
-    localStorage.removeItem("userLogin");
+    queryClient.removeQueries({ queryKey: ["user"] })
+    queryClient.removeQueries({ queryKey: ["pets"] })
     localStorage.removeItem("AUTH_TOKEN");
-    setUserLogin(null);
     navigate("/");
   };
 
@@ -66,36 +68,39 @@ const Dashboard = () => {
       cancelButtonText: "Cancelar"
     }).then((result) => {
       if (result.isConfirmed) {
-        deletePet(id).then(() => {
-          Swal.fire({
-            title: "Eliminado",
-            text: "Tu publicación ha sido eliminada.",
-            icon: "success",
-          });
-          navigate("/");
-        });
+        deletePet.mutate(id, {
+          onSuccess: () => {
+            Swal.fire({
+              title: "Eliminado",
+              text: "Tu publicación ha sido eliminada.",
+              icon: "success",
+            });
+            navigate("/");
+          }
+        })
 
       }
     });
   }
-  const handleFavorite = async (pet, valid,) => {
-    await toggleFavorite(pet, valid)
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'success',
-      title: 'Favorito Eliminado correctamente',
-      showConfirmButton: false,
-      timer: 2000,
-      timerProgressBar: true
-    });
+  const handleFavorite = (pet, valid,) => {
+    toggleFavorite.mutate({ animalId: pet, isFavorite: valid }, {
+      onSuccess: (data) => {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Favorito Eliminado correctamente',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+        });
+      }
+    })
+
   }
 
   useEffect(() => {
-    getActualUser();
-  }, [])
-  useEffect(() => {
-    if (!userLogin) {
+    if (!userLogin && !isLoadingAuth) {
       navigate("/login")
     };
     if (userLogin) {
@@ -249,7 +254,7 @@ const Dashboard = () => {
                         📍 {animal.location}
                       </p>
                       <div className="flex gap-2">
-                        <Link to={`/editar/${animal._id}`} className="flex-1" onClick={() => setEditPet(animal)}>
+                        <Link to={`/editar/${animal._id}`} className="flex-1">
                           <Button variant="outline" size="sm" className="w-full">
                             <Pencil className="mr-1 h-3 w-3" />
                             Editar

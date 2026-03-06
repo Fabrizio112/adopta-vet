@@ -32,8 +32,8 @@ export class AuthService {
     async getUser() {
         try {
             const url = this.authBase + `/profile`
-            const data = await api.get(url);
-            return data;
+            const response = await api.get(url);
+            return response.data;
 
         } catch (error) {
             if (isAxiosError(error) && error.response) {

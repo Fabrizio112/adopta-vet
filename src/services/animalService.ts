@@ -7,8 +7,8 @@ export class AnimalService {
     async getAllAnimals() {
         try {
             const url = this.authBase;
-            const data = await api.get(url);
-            return data;
+            const response = await api.get(url);
+            return response.data;
         } catch (error) {
             if (isAxiosError(error) && error.response) {
                 throw new Error(error.response.data.error);
@@ -20,8 +20,8 @@ export class AnimalService {
     async getAnimalById(animalId: string) {
         try {
             const url = this.authBase + `/${animalId}`;
-            const data = await api.get(url);
-            return data;
+            const response = await api.get(url);
+            return response.data;
         } catch (error) {
             if (isAxiosError(error) && error.response) {
                 throw new Error(error.response.data.error);
@@ -41,7 +41,7 @@ export class AnimalService {
             throw error;
         }
     }
-    async updateAnimal(animalId: string, animalData: AddPetData) {
+    async updateAnimal({ animalId, animalData }: { animalId: string, animalData: AddPetData }) {
         try {
             const url = this.authBase + `/${animalId}`;
             const data = await api.put(url, animalData);
@@ -65,7 +65,7 @@ export class AnimalService {
             throw error;
         }
     }
-    async toggleFavorite(animalId: string, isFavorite: boolean) {
+    async toggleFavorite({ animalId, isFavorite }: { animalId: string, isFavorite: boolean }) {
         const url = this.authBase + `/${animalId}/favorite`;
 
         if (isFavorite) {
