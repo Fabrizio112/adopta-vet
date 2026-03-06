@@ -13,6 +13,7 @@ const Index = () => {
   const filters = useAppStore((state) => state.filters)
   const { pets, isLoading, isError } = useGetPets()
   const { data: userLogin } = useAuth()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const filteredPets = useMemo(() => (pets ?? []).filter((pet) => {
     if (filters.type !== "all" && pet.type !== filters.type) return false;
@@ -30,7 +31,9 @@ const Index = () => {
             <span className="text-2xl">🐾</span>
             <span className="text-xl font-bold text-foreground">AdoptaPet</span>
           </Link>
-          <div className="flex gap-2">
+
+          {/* Desktop nav */}
+          <div className="hidden md:flex gap-2">
             {!userLogin ? (
               <Button variant="blue" asChild>
                 <Link to="/login">
@@ -46,7 +49,6 @@ const Index = () => {
                 </Link>
               </Button>
             )}
-
             <Button asChild>
               <Link to="/publicar">
                 <PlusCircle className="mr-2 h-4 w-4" />
@@ -55,7 +57,42 @@ const Index = () => {
             </Button>
           </div>
 
+          {/* Mobile hamburger button */}
+          <button
+            className="md:hidden p-2 text-foreground"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Abrir menú"
+          >
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
+
+        {/* Mobile menu */}
+        {menuOpen && (
+          <div className="md:hidden border-t border-border bg-card px-4 py-4 flex flex-col gap-3">
+            {!userLogin ? (
+              <Button variant="blue" asChild className="w-full" onClick={() => setMenuOpen(false)}>
+                <Link to="/login">
+                  <User className="mr-2 h-4 w-4" />
+                  Iniciar Sesion
+                </Link>
+              </Button>
+            ) : (
+              <Button variant="outline" asChild className="w-full" onClick={() => setMenuOpen(false)}>
+                <Link to="/dashboard">
+                  <User className="mr-2 h-4 w-4" />
+                  Mi Panel
+                </Link>
+              </Button>
+            )}
+            <Button asChild className="w-full" onClick={() => setMenuOpen(false)}>
+              <Link to="/publicar">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Publicar mascota
+              </Link>
+            </Button>
+          </div>
+        )}
       </header>
 
       <Hero />
