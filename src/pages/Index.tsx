@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, User } from "lucide-react";
+import { PlusCircle, User, Menu, X } from "lucide-react";
 import Hero from "@/components/Hero";
 import PetCard from "@/components/PetCard";
 import PetFilters from "@/components/PetFilters";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useAppStore } from "@/store/store";
 import { useGetPets } from "@/hooks/useGetPets";
 import { useAuth } from "@/hooks/useAuth";
