@@ -88,7 +88,7 @@ const AddPet = () => {
         </div>
       </header>
 
-      <main className="container mx-auto max-w-2xl px-4 py-12">
+      <main className="container mx-auto max-w-2xl px-4 py-12 text-center md:text-start">
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl">Publicar mascota en adopción</CardTitle>

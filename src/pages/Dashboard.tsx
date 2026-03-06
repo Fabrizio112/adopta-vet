@@ -143,7 +143,7 @@ const Dashboard = () => {
           </Link>
         </div>
 
-        <h1 className="mb-8 text-3xl font-bold text-foreground">Mi Panel</h1>
+        <h1 className="mb-8 text-3xl font-bold text-foreground text-center md:text-start">Mi Panel</h1>
 
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
@@ -163,13 +163,13 @@ const Dashboard = () => {
 
           {/* Profile Tab */}
           <TabsContent value="profile">
-            <Card className="border-border">
+            <Card className="border-border text-center md:text-start">
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-xl">Datos personales</CardTitle>
+                <CardTitle className="text-xl w-full">Datos personales</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Avatar */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 justify-center md:justify-start">
                   <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-3xl">
                     {profileData.name.charAt(0).toUpperCase()}
                   </div>
@@ -197,7 +197,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className="border-t border-border pt-4">
-                  <Button variant="destructive" size="sm" disabled>
+                  <Button variant="destructive" size="sm" disabled className="w-full md:w-auto">
                     <Trash2 className="mr-2 h-4 w-4" />
                     Eliminar cuenta
                   </Button>
