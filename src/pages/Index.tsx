@@ -68,31 +68,33 @@ const Index = () => {
         </div>
 
         {/* Mobile menu */}
-        {menuOpen && (
-          <div className="md:hidden border-t border-border bg-card px-4 py-4 flex flex-col gap-3">
-            {!userLogin ? (
-              <Button variant="blue" asChild className="w-full" onClick={() => setMenuOpen(false)}>
-                <Link to="/login">
-                  <User className="mr-2 h-4 w-4" />
-                  Iniciar Sesion
-                </Link>
-              </Button>
-            ) : (
-              <Button variant="outline" asChild className="w-full" onClick={() => setMenuOpen(false)}>
-                <Link to="/dashboard">
-                  <User className="mr-2 h-4 w-4" />
-                  Mi Panel
-                </Link>
-              </Button>
-            )}
-            <Button asChild className="w-full" onClick={() => setMenuOpen(false)}>
-              <Link to="/publicar">
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Publicar mascota
+        <div
+          className={`md:hidden border-t border-border bg-card overflow-hidden transition-all duration-300 ease-out ${
+            menuOpen ? "max-h-40 opacity-100 py-4" : "max-h-0 opacity-0 py-0"
+          } px-4 flex flex-col gap-3`}
+        >
+          {!userLogin ? (
+            <Button variant="blue" asChild className="w-full" onClick={() => setMenuOpen(false)}>
+              <Link to="/login">
+                <User className="mr-2 h-4 w-4" />
+                Iniciar Sesion
               </Link>
             </Button>
-          </div>
-        )}
+          ) : (
+            <Button variant="outline" asChild className="w-full" onClick={() => setMenuOpen(false)}>
+              <Link to="/dashboard">
+                <User className="mr-2 h-4 w-4" />
+                Mi Panel
+              </Link>
+            </Button>
+          )}
+          <Button asChild className="w-full" onClick={() => setMenuOpen(false)}>
+            <Link to="/publicar">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Publicar mascota
+            </Link>
+          </Button>
+        </div>
       </header>
 
       <Hero />
