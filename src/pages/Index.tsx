@@ -69,9 +69,8 @@ const Index = () => {
 
         {/* Mobile menu */}
         <div
-          className={`md:hidden border-t border-border bg-card overflow-hidden transition-all duration-300 ease-out ${
-            menuOpen ? "max-h-40 opacity-100 py-4" : "max-h-0 opacity-0 py-0"
-          } px-4 flex flex-col gap-3`}
+          className={`md:hidden border-t border-border bg-card overflow-hidden transition-all duration-300 ease-out ${menuOpen ? "max-h-40 opacity-100 py-4" : "max-h-0 opacity-0 py-0"
+            } px-4 flex flex-col gap-3`}
         >
           {!userLogin ? (
             <Button variant="blue" asChild className="w-full" onClick={() => setMenuOpen(false)}>
@@ -117,13 +116,20 @@ const Index = () => {
             </aside>
 
             <div>
-              {isLoading && <p> Cargando Animales ...</p>}
-              {(filteredPets.length === 0 && isError) ? (
+              {isLoading && <div className="grid grid-cols-3 gap-4">
+                <div className="h-80 w-full bg-gray-200 animate-pulse rounded-lg" />
+                <div className="h-80 w-full bg-gray-200 animate-pulse rounded-lg" />
+                <div className="h-80 w-full bg-gray-200 animate-pulse rounded-lg" />
+                <div className="h-80 w-full bg-gray-200 animate-pulse rounded-lg" />
+                <div className="h-80 w-full bg-gray-200 animate-pulse rounded-lg" />
+                <div className="h-80 w-full bg-gray-200 animate-pulse rounded-lg" />
+              </div>}
+
+              {((filteredPets.length === 0 || isError) && !isLoading) ? (
                 <div className="flex min-h-[400px] items-center justify-center rounded-lg border border-dashed border-border">
                   <div className="text-center">
-                    <p className="text-lg text-muted-foreground">
-                      No se encontraron mascotas con estos filtros
-                    </p>
+                    <h2 className="text-xl font-semibold">No se encontraron mascotas 🐾</h2>
+                    <p className="text-gray-500">Intenta ajustar las busqueda.</p>
                   </div>
                 </div>
               ) : (

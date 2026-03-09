@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft } from "lucide-react";
 import { PetType, PetAge, PetSize, AddPetData, PetLocation } from "@/types/pet";
 import { ProvinciaArgentina } from "@/helper";
-import Swal from "sweetalert2";
 import { useAuth } from "@/hooks/useAuth";
 import { usePets } from "@/hooks/usePets";
 import { usePet } from "@/hooks/usePet";
@@ -31,36 +30,13 @@ const EditPet = () => {
       !formData.size || !formData.description || !formData.location) {
       return;
     }
-    try {
-      editPet.mutate({
-        animalId: param.id, animalData: {
-          ...formData,
-          imageUrl: formData.imageUrl ? formData.imageUrl : formData.type === "dog" ? "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80" : "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=80"
-        }
-      }, {
-        onSuccess: () => {
-          Swal.fire({
-            icon: "success",
-            title: "Mascota actualizada",
-            text: "¡La mascota se ha actualizado correctamente!",
-            timer: 2000,
-            showConfirmButton: false
-          })
-          navigate("/");
-        }
-      })
-    } catch (error) {
-      if (error instanceof Error) {
-        Swal.fire({
-          icon: "error",
-          title: "Error al actualizar mascota",
-          text: error.message,
-        })
+    editPet.mutate({
+      animalId: param.id, animalData: {
+        ...formData,
+        imageUrl: formData.imageUrl ? formData.imageUrl : formData.type === "dog" ? "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80" : "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=80"
       }
-
-    }
-
-
+    })
+    navigate("/")
   };
   useEffect(() => {
     if (!userLogin && !isLoadingUser) {

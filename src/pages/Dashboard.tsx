@@ -68,35 +68,12 @@ const Dashboard = () => {
       cancelButtonText: "Cancelar"
     }).then((result) => {
       if (result.isConfirmed) {
-        deletePet.mutate(id, {
-          onSuccess: () => {
-            Swal.fire({
-              title: "Eliminado",
-              text: "Tu publicación ha sido eliminada.",
-              icon: "success",
-            });
-            navigate("/");
-          }
-        })
-
+        deletePet.mutate(id)
       }
     });
   }
   const handleFavorite = (pet, valid,) => {
-    toggleFavorite.mutate({ animalId: pet, isFavorite: valid }, {
-      onSuccess: (data) => {
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'success',
-          title: 'Favorito Eliminado correctamente',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true
-        });
-      }
-    })
-
+    toggleFavorite.mutate({ animalId: pet, isFavorite: valid })
   }
 
   useEffect(() => {

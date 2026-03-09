@@ -34,20 +34,7 @@ const PetCard = ({ pet, favorites }: PetCardProps) => {
   const { toggleFavorite } = useFavorites()
   const handleFavorite = async (animalId, isFavorite) => {
     if (isFavorite == null) return
-    toggleFavorite.mutate({ animalId, isFavorite }, {
-      onSuccess: (data) => {
-        console.log(data)
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'success',
-          title: data?.message,
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true
-        });
-      }
-    })
+    toggleFavorite.mutate({ animalId, isFavorite })
 
   }
   return (

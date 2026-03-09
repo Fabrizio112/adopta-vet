@@ -37,31 +37,12 @@ const AddPet = () => {
       !formData.size || !formData.description || !formData.location) {
       return;
     }
-    try {
-      addPet.mutate({
-        ...formData,
-        user: userLogin,
-        imageUrl: formData.imageUrl || formData.type === "dog" ? "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80" : "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=80",
-      }, {
-        onSuccess: () => {
-          Swal.fire({
-            icon: "success",
-            title: "Mascota agregada",
-            text: "¡La mascota se ha agregado correctamente!",
-            timer: 2000,
-            showConfirmButton: false
-          })
-          navigate("/");
-        }
-      })
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error al agregar mascota",
-        text: error.message,
-      })
-    }
-
+    addPet.mutate({
+      ...formData,
+      user: userLogin,
+      imageUrl: formData.imageUrl || formData.type === "dog" ? "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80" : "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=80",
+    })
+    navigate("/")
 
   };
 

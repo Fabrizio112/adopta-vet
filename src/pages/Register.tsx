@@ -27,10 +27,14 @@ const Register = () => {
       if (data.status == 201) {
         await Swal.fire({
           icon: "success",
-          title: "Registrando usuario",
+          title: "Registrando usuario ...",
           text: "¡Cuenta creada exitosamente! Redirigiendo a inicio de sesión...",
           timer: 2000,
-          showConfirmButton: false
+          showConfirmButton: false,
+          timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading()
+          }
         })
         navigate("/login")
       }

@@ -25,10 +25,14 @@ const Login = () => {
       if (data.status == 200) {
         await swal.fire({
           icon: "success",
-          title: "Iniciando Sesion",
+          title: "Iniciando Sesion ...",
           text: "¡Bienvenido de nuevo! Redirigiendo a tu perfil...",
           timer: 2000,
-          showConfirmButton: false
+          showConfirmButton: false,
+          timerProgressBar: true,
+          didOpen: () => {
+            swal.showLoading()
+          }
         })
         localStorage.setItem("AUTH_TOKEN", data.data.token)
         navigate("/")

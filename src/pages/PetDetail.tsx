@@ -31,24 +31,10 @@ const PetDetail = () => {
 
   const { pet, isLoading, isError } = usePet(id)
 
-  const isFavorite = useMemo(() => userLogin && userLogin.favorites.some(fav => fav._id == pet?._id), [pet])
+  const isFavorite = useMemo(() => userLogin && userLogin.favorites.some(fav => fav._id == pet?._id), [pet, userLogin])
   const handleFavorite = (animalId, isFavorite,) => {
     if (isFavorite == null) return
-    toggleFavorite.mutate({ animalId, isFavorite }, {
-      onSuccess: (data) => {
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'success',
-          title: data?.message,
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true
-        });
-      }
-    })
-
-
+    toggleFavorite.mutate({ animalId, isFavorite })
   }
 
   if (isLoading) return (
